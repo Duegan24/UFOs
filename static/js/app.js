@@ -38,9 +38,6 @@ function updateFilters() {
   // to the filters list. Otherwise, clear that filter from the filters object
   if (filterChanged.value !== "") filters[filterChanged.id] = filterChanged.value;
   else delete filters[filterChanged.id]
-
-  console.log(filters)
-
   
   // Call function to apply all filters and rebuild the table
   filterTable();
@@ -55,7 +52,6 @@ function filterTable() {
   // // Loop through all of the filters and keep any data that
   // // matches the filter values
   Object.keys(filters).forEach(function(key) {
-    console.log(key,filters[key]);
     filteredData = filteredData.filter(row => row[key] === filters[key]);
   });
 
@@ -63,10 +59,26 @@ function filterTable() {
   buildTable(filteredData);
 }
 
+function clearFilters() {
+
+  // For each filter that has had entries, clear the entry  
+  Object.keys(filters).forEach(function(key) {
+    document.getElementById(key).value = "";
+  });
+
+  // Clear Filter List
+  filters = {}
+
+  // Rerun the filters table function so the table will reset
+  filterTable()
+
+}
 
 // Attach an event to listen for changes to each filter
 // Hint: You'll need to select the event and what it is listening for within each set of parenthesis
 d3.selectAll("input").on("change", updateFilters);
+
+d3.select("#filter-btn").on("click", clearFilters)
 
 // Build the table when the page loads
 buildTable(tableData);

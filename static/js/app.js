@@ -22,4 +22,51 @@ function buildTable(data) {
         }
       );
     });
-  }
+}
+
+// Keep track of all filters
+var filters = {};
+
+function updateFilters() {
+
+  // Save the element, value, and id of the filter that was changed
+  let event = d3.event.target
+  let filterChanged = {id: event.id, value: event.value, element: event}
+
+
+  // If a filter value was entered then add that filterId and value
+  // to the filters list. Otherwise, clear that filter from the filters object
+  if (filterChanged.value !== "") filters[filterChanged.id] = filterChanged.value;
+  else delete filters[filterChanged.id]
+
+  console.log(filters)
+
+  
+  // Call function to apply all filters and rebuild the table
+  filterTable();
+}
+
+
+function filterTable() {
+
+  // Set the filteredData to the tableData
+  let filteredData = tableData;
+
+  // // Loop through all of the filters and keep any data that
+  // // matches the filter values
+  Object.keys(filters).forEach(function(key) {
+    console.log(key,filters[key]);
+    filteredData = filteredData.filter(row => row[key] === filters[key]);
+  });
+
+  // Finally, rebuild the table using the filtered Data
+  buildTable(filteredData);
+}
+
+
+// Attach an event to listen for changes to each filter
+// Hint: You'll need to select the event and what it is listening for within each set of parenthesis
+d3.selectAll("input").on("change", updateFilters);
+
+// Build the table when the page loads
+buildTable(tableData);
